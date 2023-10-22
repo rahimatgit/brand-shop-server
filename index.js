@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -40,58 +40,80 @@ async function run() {
 
 
         const brandsCollection = client.db("brandsDB").collection("brand");
+        const cartCollection = client.db("brandsDB").collection("cart");
 
-        app.get('/products', async(req, res) => {
+        app.get('/products', async (req, res) => {
             const cursor = brandsCollection.find();
             const result = await cursor.toArray();
             res.send(result);
         })
 
         // nike
-        app.get('/products/Nike', async(req, res) => {
-            const query = {brandName: "Nike"};
+        app.get('/products/Nike', async (req, res) => {
+            const query = { brandName: "Nike" };
             const result = await brandsCollection.find(query).toArray();
             res.send(result);
         })
 
         // adidas
-        app.get('/products/Adidas', async(req, res) => {
-            const query = {brandName: "Adidas"};
+        app.get('/products/Adidas', async (req, res) => {
+            const query = { brandName: "Adidas" };
             const result = await brandsCollection.find(query).toArray();
             res.send(result);
         })
 
         // gucci
-        app.get('/products/Gucci', async(req, res) => {
-            const query = {brandName: "Gucci"};
+        app.get('/products/Gucci', async (req, res) => {
+            const query = { brandName: "Gucci" };
             const result = await brandsCollection.find(query).toArray();
             res.send(result);
         })
 
         // zara
-        app.get('/products/Zara', async(req, res) => {
-            const query = {brandName: "Zara"};
+        app.get('/products/Zara', async (req, res) => {
+            const query = { brandName: "Zara" };
             const result = await brandsCollection.find(query).toArray();
             res.send(result);
         })
 
         // h&m
-        app.get('/products/H&M', async(req, res) => {
-            const query = {brandName: "H&M"};
+        app.get('/products/H&M', async (req, res) => {
+            const query = { brandName: "H&M" };
             const result = await brandsCollection.find(query).toArray();
             res.send(result);
         })
 
         // levi's
-        app.get("/products/Levi's", async(req, res) => {
-            const query = {brandName: "Levi's"};
+        app.get("/products/Levi's", async (req, res) => {
+            const query = { brandName: "Levi's" };
             const result = await brandsCollection.find(query).toArray();
             res.send(result);
         })
 
-        app.post('/products', async(req, res) => {
+        // single product
+        app.get("/products/:name/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await brandsCollection.findOne(query);
+            res.send(result);
+        })
+
+        //    get cart
+        app.get("/carts", async (req, res) => {
+            const cursor = cartCollection.find();
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
+        app.post('/products', async (req, res) => {
             const newProduct = req.body;
             const result = await brandsCollection.insertOne(newProduct);
+            res.send(result);
+        })
+
+        app.post('/carts', async (req, res) => {
+            const newProduct = req.body;
+            const result = await cartCollection.insertOne(newProduct);
             res.send(result);
         })
 
